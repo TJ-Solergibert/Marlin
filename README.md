@@ -2,9 +2,13 @@
 <p>Marlin
 </h1>
 
+<h3 align="center">
+    <p>Enhanced launcher for NeMo tailored to train LLMs at scale in Slurm-based clusters</p>
+</h3>
+
 <p align="center">
- <img src="images/MarlinNeMo.png" width="25%"/>
-<!-- TOC -->
+ <img src="images/MarlinNeMo.png" width="50%"/>
+</p>
 
 - [Introduction](#introduction)
 - [Submitting jobs with Marlin](#submitting-jobs-with-marlin)
@@ -20,12 +24,6 @@
     - [Tokenization](#tokenization)
     - [Set the Datasets in NeMo](#set-the-datasets-in-nemo)
 - [Environment](#environment)
-
-<!-- /TOC -->
-
-<!-- /TOC -->t](#environment)
-
-<!-- /TOC -->
 
 # Introduction
 Marlin is a launcher designed to train large language models (LLMs) at scale using NeMo, which leverages Megatron-LM, specifically tailored for Slurm clusters. It's tailored for large-scale training runs and include mechanism for improved fault tolerance, automatic resumption after crashes or interruptions, automated evaluation submission, and enhanced WANDB logging. Additionally, it provides configurations optimized for peak performance on the Alps Supercomputer.
