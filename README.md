@@ -1,4 +1,6 @@
-![Marlin Logo](images/MarlinNeMo.png | width=100)
+<p align="center">
+ <img src="images/MarlinNeMo.png" width="75%"/>
+</p>
 
 --------------------------------------------------------------------------------
 
