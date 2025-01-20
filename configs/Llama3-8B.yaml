@@ -1,0 +1,29 @@
+
+defaults:
+  - Llama3-base
+  - _self_
+
+run:
+  name: Llama3-8B
+
+trainer:
+  num_nodes: 1
+
+exp_manager:
+  checkpoint_callback_params:
+    model_parallel_size: 1
+
+model:
+  # Parallelism config
+  tensor_model_parallel_size: 1
+  pipeline_model_parallel_size: 1
+  context_parallel_size: 2
+
+  # Model architecture
+  num_layers: 32
+  hidden_size: 4096
+  ffn_hidden_size: 14336
+  num_attention_heads: 32
+
+  tokenizer:
+    type: meta-llama/Meta-Llama-3-8B

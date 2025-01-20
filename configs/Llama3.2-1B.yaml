@@ -1,0 +1,39 @@
+
+defaults:
+  - Llama3-base
+  - _self_
+
+run:
+  name: Llama3.2-1B
+
+trainer:
+  num_nodes: 1
+
+exp_manager:
+  checkpoint_callback_params:
+    model_parallel_size: 1
+
+model:
+  micro_batch_size: 2
+  # Parallelism config
+  tensor_model_parallel_size: 1
+  pipeline_model_parallel_size: 1
+  context_parallel_size: 1
+
+  # Model architecture
+  num_layers: 16
+  hidden_size: 2048
+  ffn_hidden_size: 8192
+  num_attention_heads: 32
+
+  # RoPE Scaling
+  scale_positional_embedding: True
+  scale_factor: 32
+  low_freq_factor: 1
+  high_freq_factor: 4
+  old_context_len: 8192
+
+  share_embeddings_and_output_weights: True
+
+  tokenizer:
+    type: meta-llama/Llama-3.2-1B
