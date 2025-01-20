@@ -1,8 +1,31 @@
-<p align="center">
- <img src="images/MarlinNeMo.png" width="75%"/>
-</p>
+<h1 align="center">
+<p>Marlin
+</h1>
 
---------------------------------------------------------------------------------
+<p align="center">
+ <img src="images/MarlinNeMo.png" width="25%"/>
+<!-- TOC -->
+
+- [Introduction](#introduction)
+- [Submitting jobs with Marlin](#submitting-jobs-with-marlin)
+- [The Configuration file](#the-configuration-file)
+    - [Experimenting with New Models and Hyperparameters](#experimenting-with-new-models-and-hyperparameters)
+- [Directory structure](#directory-structure)
+- [Fault Tolerance](#fault-tolerance)
+- [Quality of Life Improvements](#quality-of-life-improvements)
+- [Experiment tracking & debugging](#experiment-tracking--debugging)
+- [Checkpointing](#checkpointing)
+    - [Resuming from a checkpoint](#resuming-from-a-checkpoint)
+- [Data](#data)
+    - [Tokenization](#tokenization)
+    - [Set the Datasets in NeMo](#set-the-datasets-in-nemo)
+- [Environment](#environment)
+
+<!-- /TOC -->
+
+<!-- /TOC -->t](#environment)
+
+<!-- /TOC -->
 
 # Introduction
 Marlin is a launcher designed to train large language models (LLMs) at scale using NeMo, which leverages Megatron-LM, specifically tailored for Slurm clusters. It's tailored for large-scale training runs and include mechanism for improved fault tolerance, automatic resumption after crashes or interruptions, automated evaluation submission, and enhanced WANDB logging. Additionally, it provides configurations optimized for peak performance on the Alps Supercomputer.
@@ -134,8 +157,7 @@ Before running large-scale jobs, it is recommended to optimize the number of dat
 
 For example, on the Alps supercomputer, the best configuration involved processing parquet files of 500 MB with Snappy compression and using 28 datatrove workers per node, achieving a throughput of ~70 million tokens per second per node. More details [here](https://docs.google.com/presentation/d/1t12axPhvjpuxGQWr1xJIioazKeVZ212ewuyil5uWMnQ/edit#slide=id.p).
 
-
-## Set the Datasets in NeMo
+## Set the Datasets in NeMo
 In NeMo, we will specify datasets using the `model.data.data_prefix `configuration. This field expects a list of tokenized file prefixes along with their respective weights. Example:
 ```yaml
 model:
