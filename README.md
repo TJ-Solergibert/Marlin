@@ -1,4 +1,4 @@
-![Marlin Logo](images/MarlinNeMo.png)
+![Marlin Logo](images/MarlinNeMo.png | width=100)
 
 --------------------------------------------------------------------------------
 
@@ -39,6 +39,16 @@ For the Llama3 models, we have adopted the default configurations provided by NV
 To experiment with new models, we recommend creating a new *.yaml* file for the model configuration. However, you can also override specific parameters directly in the `submit_Marlin.sh` script by using Hydra's CLI syntax (e.g. `++model.optim.shed.warmup_steps=500`)
 
 # Directory structure
+```
+📦Marlin-Llama3.2-3B-NODES-1
+ ┣ 📂checkpoint-dir-link
+ ┣ 📂debug
+ ┃ ┗ 📂87167
+ ┃ ┃ ┣ 📜compute_environment.txt
+ ┃ ┃ ┗ 📜memory_logging.txt
+ ┣ 📂triggers
+ ┗ 📂wandb
+```
 The launcher creates a project and an experiment folder under `MARLIN_RUNS_DIR`, where all logging and debugging artifacts for the run are stored. Similar to WANDB, a project can group multiple experiments.
 Within each experiment folder, you will find:
 - `debug`: For each job, this folder contains:
@@ -86,6 +96,7 @@ During training, every run will be tracked and logged using the following tools:
 # Checkpointing
 >[!CAUTION]
 > 🚨 On the Alps Supercomputer, ensure you **DO NOT WRITE**  under **`/capstor/store`**. Use `/iopsstor/scratch` instead 🚨
+
 Checkpointing is a critical component of LLM training. It must be fast to minimize disruption to training and complete, meaning it captures not only the model weights but also the optimizer states, DataLoader states and RNG states.
 
 We use the PyTorch distributed checkpointing backend (`model.dist_ckpt_format: torch_dist`) leveraging the asynchronous checkpointing option and parallelizing both storing and loading checkpoints within all the devices. The checkpoints are topology-agnostic, allowing them to be loaded with a different topology from the one used to store them. Each process will store `dist_ckpt_torch_dist_multiproc` (Default: 2) files containing the state of the run.
@@ -110,11 +121,13 @@ All NeMo/Megatron tokenized files, also referred as *file prefixes*, consist of 
 - The `.idx` files contain metadata about the corresponding `.bin` files. For more details on creating these files, refer to [this example](https://github.com/huggingface/datatrove/blob/22606036e92c8d83268f313f462ee98eceb3fa0b/src/datatrove/pipeline/tokens/megatron_tokenizer.py#L59-L72).
 >[!CAUTION]
 > 🚨 On the Alps Supercomputer, ensure you **DO NOT WRITE**  under **`/capstor/store`**. Use `/iopsstor/scratch` instead 🚨
+
 We include a launcher to tokenize data at scale using multiple nodes in `scripts/tokenization`. Start by preparing your workspace using the `scripts/tokenization/prepare_dumps.py` script, which identifies parquet files in the specified directory, filters them based on criteria (check `--filter-in` and `--filter-out`), and splits the workload evenly across `--n-dumps`.  This process generates *.txt* files for each dump, specifying the files to process.
 
 Once the workspace is ready, configure the tokenization job by setting the tokenizer, the number of datatrove parallel workers per node, and the directory we prepared with `scripts/tokenization/prepare_dumps.py` in `scripts/tokenization/submit_tokenization.sh`. Running this script will submit multiple Slurm jobs, with each job responsible for processing one dump on a single node.
 >[!CAUTION]
 > 🚨 Ensure the `SBATCH --environment` flag in `scripts/tokenization/tokenize.sh` is correctly configured for your environment 🚨
+
 Before running large-scale jobs, it is recommended to optimize the number of datatrove parallel workers  (`datatrove`'s [`LocalPipelineExecutor`](https://github.com/huggingface/datatrove/blob/22606036e92c8d83268f313f462ee98eceb3fa0b/src/datatrove/executor/local.py#L15) `tasks` & `workers`) and the input file size. You can easily modify the later with `datatrove` using the [`max_file_size`](https://github.com/huggingface/datatrove/blob/22606036e92c8d83268f313f462ee98eceb3fa0b/src/datatrove/pipeline/writers/parquet.py#L21) configuration of the `ParquetWriter`.
 
 For example, on the Alps supercomputer, the best configuration involved processing parquet files of 500 MB with Snappy compression and using 28 datatrove workers per node, achieving a throughput of ~70 million tokens per second per node. More details [here](https://docs.google.com/presentation/d/1t12axPhvjpuxGQWr1xJIioazKeVZ212ewuyil5uWMnQ/edit#slide=id.p).
