@@ -1,1 +1,1 @@
-Default directory for storing Slurm logs
+Default directory for storing training Slurm logs

@@ -69,8 +69,6 @@ export TORCH_NCCL_AVOID_RECORD_STREAMS=1
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export NVTE_FWD_LAYERNORM_SM_MARGIN=8 # https://github.com/NVIDIA/NeMo-Framework-Launcher/blob/5730fac6f97795931325cab0ac5dce1924cdcb3f/launcher_scripts/nemo_launcher/collections/conditional_cfgs.py#L59
 export NVTE_BWD_LAYERNORM_SM_MARGIN=8 # https://github.com/NVIDIA/NeMo-Framework-Launcher/blob/5730fac6f97795931325cab0ac5dce1924cdcb3f/launcher_scripts/nemo_launcher/collections/conditional_cfgs.py#L59
-MASTER_ADDR=$(hostname)
-MASTER_PORT=25678
 
 srun -l bash -c 'echo $(hostname) $(nvidia-smi | grep -o "|\\s*[0-9]*MiB")' > $GPU_MEM_LOGGING
 ulimit -c 0

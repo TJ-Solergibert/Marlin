@@ -22,6 +22,7 @@
     - [Resuming from a checkpoint](#resuming-from-a-checkpoint)
 - [Data](#data)
     - [Tokenization](#tokenization)
+    - [Dataset cache preparation](#dataset-cache-preparation)
     - [Set the Datasets in NeMo](#set-the-datasets-in-nemo)
 - [Environment](#environment)
 
@@ -44,7 +45,7 @@ To use the `submit_Marlin.sh` script, ensure the following configurations are se
 - `MARLIN_DIR`: The absolute path to this codebase (e.g. `/capstor/scratch/cscs/$USER/Marlin`).
 - `MARLIN_RUNS_DIR`: Directory to store all logging artifacts.
 - `CKPT_DIR`: Directory for storing model checkpoints. A symlink to this directory will be created in `MARLIN_RUNS_DIR`.
-- `DATASET_CACHE_DIR`: Directory to store dataset indexes. This is crucial for reusing dataset indexes across runs, especially when working with large datasets.
+- `DATASET_CACHE_DIR`: Directory to store dataset indexes. This is crucial for reusing dataset indexes across runs, especially when working with large datasets. Check the [Dataset cache preparation](#dataset-cache-preparation) section.
 - `WANDB_KEY_DIR`: Specify the path to a file containing your WANDB key. If you do not wish to use WANDB logging, disable it by setting `export WANDB_MODE=disabled`.
 
 Once all configurations are in place, submit the job to Slurm with `sbatch submit_Marlin.sh` and voilà!
@@ -155,8 +156,11 @@ Before running large-scale jobs, it is recommended to optimize the number of dat
 
 For example, on the Alps supercomputer, the best configuration involved processing parquet files of 500 MB with Snappy compression and using 28 datatrove workers per node, achieving a throughput of ~70 million tokens per second per node. More details [here](https://docs.google.com/presentation/d/1t12axPhvjpuxGQWr1xJIioazKeVZ212ewuyil5uWMnQ/edit#slide=id.p).
 
+## Dataset cache preparation
+For large runs, it is highly recommended to build the dataset indexes and store them on disk before starting multi-node training. For this purpose, we include the script `scripts/dataset_cache/submit_build_dataset_caches.sh`, which can create these indexes even from the login nodes. To use it, you only need to configure the tokenized documents you want to use, the global batch size, the total number of training steps, and the sequence length. Later, for training, you must specify the same `DATASET_CACHE_DIR` in the `submit_Marlin.sh` script.
+
 ## Set the Datasets in NeMo
-In NeMo, we will specify datasets using the `model.data.data_prefix `configuration. This field expects a list of tokenized file prefixes along with their respective weights. Example:
+In NeMo, we will specify datasets using the `model.data.data_prefix` configuration. This field expects a list of tokenized file prefixes along with their respective weights. Example:
 ```yaml
 model:
     data:

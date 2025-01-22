@@ -8,9 +8,17 @@ def create_data_prefix(list_of_paths: List[str]):
     list_of_bin_files = []
     # Select all .bin files
     for path in list_of_paths:
-        path_to_files = [os.path.join(dp, f) for dp, _, fn in os.walk(os.path.expanduser(path)) for f in fn]
+        path_to_files = [
+            os.path.join(dp, f)
+            for dp, _, fn in os.walk(os.path.expanduser(path))
+            for f in fn
+        ]
         list_of_bin_files.extend(
-            [raw_file for raw_file in path_to_files if Path(raw_file).suffix.lower().endswith(".bin")]
+            [
+                raw_file
+                for raw_file in path_to_files
+                if Path(raw_file).suffix.lower().endswith(".bin")
+            ]
         )
 
     list_of_sizes = [os.path.getsize(path) for path in list_of_bin_files]
@@ -20,8 +28,12 @@ def create_data_prefix(list_of_paths: List[str]):
     list_of_bin_files = [
         bin_file[:-4] for bin_file in list_of_bin_files
     ]  # NOTE(tj.solergibert) Delete .bin extension to have file prefixes
-    interleaved = [val for pair in zip(list_of_normalized_tokens, list_of_bin_files) for val in pair]
-    print(*interleaved, sep=",")
+    interleaved = [
+        val
+        for pair in zip(list_of_normalized_tokens, list_of_bin_files)
+        for val in pair
+    ]
+    return interleaved
 
 
 if __name__ == "__main__":
@@ -36,4 +48,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     paths = [x.strip() for x in args.paths.split(",")]
-    create_data_prefix(paths)
+    data_prefix = create_data_prefix(paths)
+    print(*data_prefix, sep=",")
